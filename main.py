@@ -1,6 +1,11 @@
-from flask import Flask
+from flask import Flask, Response
 
 app = Flask(__name__)
+
+@app.route('/health')
+def gethealth():
+    print('Health')
+    return Response(status=200)
 
 
 if __name__ == '__main__':

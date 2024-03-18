@@ -20,6 +20,7 @@ def toInit():
     s.game_database['team'] = r.get('team', None)
     a = r.get('map_size', None)
     s.map_array = s.get_map(a)
+    print(s.game_database)
     return Response(status=200)
     # return jsonify(s.game_database), 200
 
@@ -29,14 +30,16 @@ def toRound():
     r = request.get_json()
     s.game_database['balance'] = r.get('balance', None)
     s.game_database['round'] = r.get('round', None)
-    # return Response(status=200)
-    return jsonify(s.game_database), 200
+    print(s.game_database)
+    return Response(status=200)
+    # return jsonify(s.game_database), 200
 
 
 @app.route('/agent/<int:id>', methods=['POST'])
 def toInitAgent(id):
     agent_info = request.get_json()
     s.agents.append(agent_info)
+    print(s.agents)
     # return  jsonify(s.agents), 200
     return Response(status=200)
 

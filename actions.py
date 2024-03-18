@@ -5,7 +5,7 @@ def define_action(id):
     action = None
     for agent in s.agents:
         if id == agent['id'] and agent['type'] == "FACTORY":
-            if s.game_database['round'] == 1:
+            if s.game_database['round'] == 0:
                 action = {
                     "type": "BUILD_BOT",
                     "params": {
@@ -16,7 +16,7 @@ def define_action(id):
                 action = {
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
-                        "power_type": "SOLAR_PANELS"
+                        "power_type": "WINDMILL"  #SOLAR_PANELS, GEOTHERMAL, DAM
                     }
                 }
             else:

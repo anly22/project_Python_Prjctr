@@ -19,7 +19,8 @@ def toInit():
     s.game_database['team'] = r.get('team', None)
     a = r.get('map_size', None)
     s.map_array = s.get_map(a)
-    return Response(status=200)
+    # return Response(status=200)
+    return jsonify(s.game_database), 200
 
 
 if __name__ == '__main__':

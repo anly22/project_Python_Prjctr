@@ -7,6 +7,7 @@ agents = []
 # CREATE
 map_array = []
 
+
 def get_map(size: int):
     map_array = np.zeros((size, size))
     return map_array

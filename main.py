@@ -1,6 +1,6 @@
 from flask import Flask, Response, jsonify, request
 import json
-import numpy as np
+# import numpy as np
 import storage as s
 
 app = Flask(__name__)
@@ -30,6 +30,14 @@ def toRound():
     s.game_database['round'] = r.get('round', None)
     # return Response(status=200)
     return jsonify(s.game_database), 200
+
+
+@app.route('/agent/<int:id>', methods=['POST'])
+def toInitAgent(id):
+    agent_info = request.get_json()
+    s.agents.append(agent_info)
+    return  jsonify(s.agents), 200
+    # return Response(status=200)
 
 
 if __name__ == '__main__':

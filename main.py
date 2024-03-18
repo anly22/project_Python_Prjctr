@@ -23,5 +23,14 @@ def toInit():
     return jsonify(s.game_database), 200
 
 
+@app.route('/round', methods=['POST'])
+def toRound():
+    r = request.get_json()
+    s.game_database['balance'] = r.get('balance', None)
+    s.game_database['round'] = r.get('round', None)
+    # return Response(status=200)
+    return jsonify(s.game_database), 200
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)

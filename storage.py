@@ -1,5 +1,6 @@
 import numpy as np
 
+
 game_database = {
     'balance': None,
     'map_size': None,

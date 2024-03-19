@@ -1,6 +1,11 @@
 import numpy as np
 
-game_database = {'balance': None, 'map_size': None, 'team': None, 'round': 0}
+game_database = {
+    'balance': None,
+    'map_size': None,
+    'team': None,
+    'round': 0
+    }
 
 agents = []
 

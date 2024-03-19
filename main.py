@@ -14,40 +14,53 @@ def gethealth():
 
 @app.route('/init', methods=['POST'])
 def toInit():
-    r = request.get_json()
-    s.game_database['map_size'] = r.get('map_size', None)
-    s.game_database['balance'] = r.get('init_balance', None)
-    s.game_database['team'] = r.get('team', None)
-    a = r.get('map_size', None)
-    s.map_array = s.get_map(a)
-    print(s.game_database)
-    return Response(status=200)
-    # return jsonify(s.game_database), 200
+    if request.is_json:
+        r = request.get_json()
+        s.game_database['map_size'] = r['map_size']
+        s.game_database['balance'] = r['init_balance']
+        s.game_database['team'] = r['team']
+        a = r['map_size']
+        s.map_array = s.get_map(a)
+        print("INIT", s.game_database)
+        return Response(status=200)
+    else:
+        return Response(status=404)
+        # return jsonify(s.game_database), 200
 
 
 @app.route('/round', methods=['POST'])
 def toRound():
-    r = request.get_json()
-    s.game_database['balance'] = r.get('balance', None)
-    s.game_database['round'] = r.get('round', None)
-    print(s.game_database)
-    return Response(status=200)
+    if request.is_json:
+        r = request.get_json()
+        s.game_database['balance'] = r['balance']
+        s.game_database['round'] = r['round']
+        print('ROUND', s.game_database)
+        return Response(status=200)
+    else:
+        return Response(status=404)
     # return jsonify(s.game_database), 200
 
 
 @app.route('/agent/<int:id>', methods=['POST'])
 def toInitAgent(id):
-    agent_info = request.get_json()
-    s.agents.append(agent_info)
-    print(s.agents)
-    # return  jsonify(s.agents), 200
-    return Response(status=200)
+    if request.is_json:
+        agent_info = request.get_json()
+        s.agents.append(agent_info)
+        print(s.agents)
+        # return  jsonify(s.agents), 200
+        return Response(status=200)
+    else:
+        return Response(status=404)
 
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
 def toCallAgent_Act(id):
     res = jsonify(a.define_action(id))
     res.headers['Content-Type'] = 'application/json'
+
+    for a in s.agents: 
+        print(a, 'AGENTS')
+        
     return res, 200
 
 

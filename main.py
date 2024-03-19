@@ -39,8 +39,7 @@ def toInit():
         return Response(status=200)
     else:
         return Response(status=404)
-        # return jsonify(s.game_database), 200
-
+        
 
 @app.route('/round', methods=['POST'])
 def toRound():
@@ -52,8 +51,7 @@ def toRound():
         return Response(status=200)
     else:
         return Response(status=404)
-    # return jsonify(s.game_database), 200
-
+   
 
 @app.route('/agent/<int:id>', methods=['POST'])
 def toInitAgent(id):
@@ -62,7 +60,16 @@ def toInitAgent(id):
         s.agents.append(agent_info)
         for a in s.agents: 
             print('AGENT', a)
-        # return  jsonify(s.agents), 200
+        return Response(status=200)
+    else:
+        return Response(status=404)
+
+
+@app.route('/agent/<int:id>', methods=['PATCH'])
+def toUpdateAgent(id):
+    if request.is_json:
+        agent_info = request.get_json()
+        #TODO update agent_info
         return Response(status=200)
     else:
         return Response(status=404)
@@ -73,7 +80,7 @@ def toCallAct(id):
     res = a.define_action(id)
     # res.headers['Content-Type'] = 'application/json'
     return jsonify(res), 200
-        
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

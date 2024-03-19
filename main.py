@@ -2,6 +2,7 @@ from flask import Flask, Response, jsonify, request
 import json
 import numpy as np
 import storage as s
+import action as a
 
 
 app = Flask(__name__)
@@ -69,11 +70,10 @@ def toInitAgent(id):
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
 def toCallAct(id):
-    print(id, 'BUILD BOT AGENT')
-    build = jsonify({"type": "BUILD_BOT", "params": {"d_loc": [-1, 1]}})
-
-    return build, 200
-    
+    res = jsonify(a.define_action(id))
+    # res.headers['Content-Type'] = 'application/json'
+    return res, 200
+        
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

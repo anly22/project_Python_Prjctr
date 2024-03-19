@@ -70,9 +70,9 @@ def toInitAgent(id):
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
 def toCallAct(id):
-    res = jsonify(a.define_action(id))
+    res = a.define_action(id)
     # res.headers['Content-Type'] = 'application/json'
-    return res, 200
+    return jsonify(res), 200
         
 
 if __name__ == '__main__':

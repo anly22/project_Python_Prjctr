@@ -12,19 +12,11 @@ def define_action(id):
                     "d_loc": [-1, 3]
                     }
                 }
+                return action
             else:
-                action = None
-        
-        elif id == agent['id'] and agent['type'] == "ENGINEER_BOT":
-            if s.game_database['round'] == 2:
-                action = {
-                    "type": "MOVE",
-                    "params": {
-                        "d_loc": [-1, 1]
-                    }
-                }
-            else:
-                action = None
+                action = None 
+                return action       
         else:
             action = None
-        return action
+            return action
+      

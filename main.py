@@ -82,5 +82,13 @@ def toCallAct(id):
     return jsonify(res), 200
 
 
+@app.route('/agent/<int:id>', methods=['DELETE'])
+def toDeleteAgent(id):
+    for i, agent in enumerate(s.agents):
+        if agent['id'] == id:
+            s.agents.remove(s.agents[i])
+        return  Response(status=200)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

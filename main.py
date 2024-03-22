@@ -41,8 +41,8 @@ def toInitAgent(id: int):
     if request.is_json:
         r = request.get_json()
         s.agents[id] = r
-        x, y = r['location']
-        s.map[x][y] = {r['id'], r['type'], r['team']}
+        # x, y = r['location']
+        # s.map[x][y] = {r['id'], r['type'], r['team']}
         return Response(status=200)
     else:
         return Response(status=404)
@@ -88,7 +88,7 @@ def toGetAction(id: int):
 
 
     if agent['type'] == "ENGINEER_BOT":
-        if a.check_round(s.game_database) >= 2 and "WINDMILL" in agent["warehouse"].keys(): 
+        if a.check_round(s.game_database) >= 3: # and "WINDMILL" in agent["warehouse"].keys(): 
             return jsonify({
                 "type": "DEPLOY",
                 "params": {
@@ -96,7 +96,7 @@ def toGetAction(id: int):
                     "d_loc": [-1, 0]
                 }
                 })
-        elif a.check_round(s.game_database) >= 31 and  "SOLAR_PANELS" in agent["warehouse"].keys(): 
+        elif a.check_round(s.game_database) >= 31: #and  "SOLAR_PANELS" in agent["warehouse"].keys(): 
             return jsonify({
                 "type": "DEPLOY",
                 "params": {

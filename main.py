@@ -86,7 +86,7 @@ def toGetAction(id: int):
             return jsonify({
                 "type": "BUILD_BOT",
                 "params": {
-                "d_loc": (random.choice([-1, 3]),random.choice([-1, 3]))
+                "d_loc": (random.choice([-1, 2]),random.choice([-1, 2]))
                 }
                 })
         elif a.check_round(game_database) >= 1 and a.check_balance(game_database, 200) and sum(agent["warehouse"].values()) < 3:
@@ -113,7 +113,7 @@ def toGetAction(id: int):
                 "type": "DEPLOY",
                 "params": {
                     "power_type": "WINDMILL",
-                    "d_loc": random.choice([-1, 0],[0, -1], [1, 0], [0, 1])
+                    "d_loc": random.choice([[-1, 0],[0, -1], [1, 0], [0, 1]])
                 }
                 })
         elif a.check_round(game_database) >= 31: #and  "SOLAR_PANELS" in agent["warehouse"].keys(): 
@@ -121,7 +121,7 @@ def toGetAction(id: int):
                 "type": "DEPLOY",
                 "params": {
                     "power_type": "SOLAR_PANELS",
-                    "d_loc": random.choice([-1, 0],[0, -1], [1, 0], [0, 1])
+                    "d_loc": random.choice([[-1, 0],[0, -1], [1, 0], [0, 1]])
                 }
                 })
         elif a.check_round(game_database) == 1: 
@@ -134,7 +134,7 @@ def toGetAction(id: int):
             return jsonify({
                 "type": "MOVE",
                 "params": {
-                "d_loc": random.choice([-1, 0],[0, -1], [1, 0], [0, 1])
+                "d_loc": random.choice([[-1, 0],[0, -1], [1, 0], [0, 1]])
                 }
                 })
         

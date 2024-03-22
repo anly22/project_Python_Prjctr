@@ -1,10 +1,25 @@
 from flask import Flask, Response, jsonify, request
 import json
-import storage as s
+# import storage as s
 import action as a
 
 
 app = Flask(__name__)
+
+game_database = {
+    'balance': None,
+    'map_size': None,
+    'team': None,
+    'round': 0
+    }
+
+agents = {}
+
+map = []
+
+def get_map(size: int):
+    map = [[None] * size for _ in range(size)]
+    return map
 
 
 @app.route('/health')
@@ -16,10 +31,14 @@ def getHealth():
 def toInit():
     if request.is_json:
         r = request.get_json()
-        s.game_database['map_size'] = r['map_size']
-        s.game_database['balance'] = r['init_balance']
-        s.game_database['team'] = r['team']
-        s.map = s.get_map(r['map_size'])
+        game_database['map_size'] = r['map_size']
+        game_database['balance'] = r['init_balance']
+        game_database['team'] = r['team']
+        map = get_map(r['map_size'])
+
+        global agents
+        agents = {}
+
         return Response(status=200)
     else:
         return Response(status=404)
@@ -29,8 +48,8 @@ def toInit():
 def toRound():
     if request.is_json:
         r = request.get_json()
-        s.game_database['balance'] = r['balance']
-        s.game_database['round'] = r['round']
+        game_database['balance'] = r['balance']
+        game_database['round'] = r['round']
         return Response(status=200)
     else:
         return Response(status=404)
@@ -40,7 +59,7 @@ def toRound():
 def toInitAgent(id: int):
     if request.is_json:
         r = request.get_json()
-        s.agents[id] = r
+        agents[id] = r
         # x, y = r['location']
         # s.map[x][y] = {r['id'], r['type'], r['team']}
         return Response(status=200)
@@ -52,7 +71,7 @@ def toInitAgent(id: int):
 def toUpdateAgent(id: int):
     if request.is_json:
         r = request.get_json()
-        s.agents[id].update(r)
+        agents[id].update(r)
         return Response(status=200)
     else:
         return Response(status=404)
@@ -60,23 +79,23 @@ def toUpdateAgent(id: int):
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
 def toGetAction(id: int):
-    agent = s.agents[id]
+    agent = agents[id]
     if agent['type'] == "FACTORY":
-        if a.check_round(s.game_database) >= 0 and a.check_amount(s.agents) < 2:
+        if a.check_round(game_database) >= 0 and a.check_amount(agents) < 2:
             return jsonify({
                 "type": "BUILD_BOT",
                 "params": {
                 "d_loc": [-1, 3]
                 }
                 })
-        elif a.check_round(s.game_database) >= 1 and a.check_balance(s.game_database, 200) and sum(agent["warehouse"].values()) < 3:
+        elif a.check_round(game_database) >= 1 and a.check_balance(game_database, 200) and sum(agent["warehouse"].values()) < 3:
             return jsonify({
                 "type": "ASSEMBLE_POWER_PLANT",
                 "params": {
                 "power_type": "WINDMILL"
                 }
                 })
-        elif a.check_round(s.game_database) >= 30 and a.check_balance(s.game_database, 1000) and sum(agent["warehouse"].values()) < 3:
+        elif a.check_round(game_database) >= 30 and a.check_balance(game_database, 1000) and sum(agent["warehouse"].values()) < 3:
             return jsonify({
                 "type": "ASSEMBLE_POWER_PLANT",
                 "params": {
@@ -88,7 +107,7 @@ def toGetAction(id: int):
 
 
     if agent['type'] == "ENGINEER_BOT":
-        if a.check_round(s.game_database) >= 3: # and "WINDMILL" in agent["warehouse"].keys(): 
+        if a.check_round(game_database) >= 3: # and "WINDMILL" in agent["warehouse"].keys(): 
             return jsonify({
                 "type": "DEPLOY",
                 "params": {
@@ -96,7 +115,7 @@ def toGetAction(id: int):
                     "d_loc": [-1, 0]
                 }
                 })
-        elif a.check_round(s.game_database) >= 31: #and  "SOLAR_PANELS" in agent["warehouse"].keys(): 
+        elif a.check_round(game_database) >= 31: #and  "SOLAR_PANELS" in agent["warehouse"].keys(): 
             return jsonify({
                 "type": "DEPLOY",
                 "params": {
@@ -104,7 +123,7 @@ def toGetAction(id: int):
                     "d_loc": [0, 1]
                 }
                 })
-        elif a.check_round(s.game_database) == 1: 
+        elif a.check_round(game_database) == 1: 
             return jsonify({
                 "type": "EXPLORE",
                 "params": {}
@@ -123,7 +142,7 @@ def toGetAction(id: int):
 
 @app.route('/agent/<int:id>', methods=['DELETE'])
 def toDeleteAgent(id: int):
-    del s.agents[id]
+    del agents[id]
     return Response(status=200)
 
 
@@ -133,7 +152,7 @@ def toExplore(id):
     for i in r['map']:
         for j in i:
             x, y = j['location']
-            s.map[x][y] = j
+            map[x][y] = j
     return Response(status=200)
 
 

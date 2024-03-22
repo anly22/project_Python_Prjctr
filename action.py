@@ -1,34 +1,13 @@
-import storage as s
+def check_round(game_database: dict):
+    return game_database['round']
 
 
-def define_action(id):
-    action = None
-    for agent in s.agents:
-        if id == agent['id'] and agent['type'] == "FACTORY":
-            if s.game_database['round'] == 0:
-                action = {
-                    "type": "BUILD_BOT",
-                    "params": {
-                    "d_loc": [-1, 3]
-                    }
-                }
-                return action
-            else:
-                action = None 
-                return action
-            
-        elif id == agent['id'] and agent['type'] == "ENGINEER_BOT":
-            if s.game_database['round'] == 2:
-                action = {
-                    "type": "MOVE",
-                    "params": {
-                        "d_loc": [1, 1]
-                    }
-                }
-            else:
-                action = None 
-                return action   
-        else:
-            action = None
-            return action
-      
+def check_balance(database: dict, amount: int):
+    if database['balance'] >= amount:
+        return True
+    else:
+        return False
+
+
+def check_amount(database: dict):
+    return len(database)

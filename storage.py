@@ -1,4 +1,4 @@
-import numpy as np
+# import numpy as np
 
 
 game_database = {
@@ -8,12 +8,14 @@ game_database = {
     'round': 0
     }
 
-agents = []
 
-# CREATE
-map_array = []
+agents = {}
+# agents = []
+
+
+map = []
 
 
 def get_map(size: int):
-    map_array = np.zeros((size, size))
-    return map_array
+    map = [[None] * size for _ in range(size)]
+    return map

@@ -1,5 +1,5 @@
 from flask import Flask, Response, jsonify, request
-import json
+# import json
 import random
 import action as a
 
@@ -19,12 +19,12 @@ map = None
 
 
 @app.route('/health')
-def getHealth():
+def getHealth() -> Response:
     return Response(status=200)
 
 
 @app.route('/init', methods=['POST'])
-def toInit():
+def toInit() -> Response:
     if request.is_json:
         r = request.get_json()
         game_DB['map_size'] = r['map_size']
@@ -36,14 +36,14 @@ def toInit():
 
         global agents
         agents = {}
-        
+
         return Response(status=200)
     else:
         return Response(status=404)
-        
+
 
 @app.route('/round', methods=['POST'])
-def toRound():
+def toRound() -> Response:
     if request.is_json:
         r = request.get_json()
         game_DB['balance'] = r['balance']
@@ -51,10 +51,10 @@ def toRound():
         return Response(status=200)
     else:
         return Response(status=404)
-   
+
 
 @app.route('/agent/<int:id>', methods=['POST'])
-def toInitAgent(id: int):
+def toInitAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
         agents[id] = r
@@ -66,7 +66,7 @@ def toInitAgent(id: int):
 
 
 @app.route('/agent/<int:id>', methods=['PATCH'])
-def toUpdateAgent(id: int):
+def toUpdateAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
         agents[id].update(r)
@@ -81,91 +81,91 @@ def toUpdateAgent(id: int):
 def toGetAction(id: int):
     agent = agents[id]
     if agent['type'] == "FACTORY":
-        if game_DB['round'] == 0: 
+        if game_DB['round'] == 0:
             return jsonify({
                 "type": "BUILD_BOT",
                 "params": {
-                "d_loc": [(random.choice([-2, 2]),random.choice([-2, 2]))]
-                }
+                        "d_loc": [(random.choice([-2, 2]), random.choice([-2, 2]))]
+                        }
                 })
         else:
             if a.check_balance(game_DB, 200) and sum(agent["warehouse"].values()) < 2:
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
-                    "power_type": "WINDMILL"
-                    }
+                            "power_type": "WINDMILL"
+                            }
                     })
             elif a.check_balance(game_DB, 600):
                 return jsonify({
                     "type": "BUILD_BOT",
                     "params": {
-                    "d_loc": [(random.choice([-2, 2]),random.choice([-2, 2]))]
-                    }
+                            "d_loc": [(random.choice([-2, 2]), random.choice([-2, 2]))]
+                            }
                     })
             elif a.check_balance(game_DB, 600) and sum(agent["warehouse"].values()) < 3:
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
-                    "power_type": "SOLAR_PANELS"
-                    }
+                            "power_type": "SOLAR_PANELS"
+                            }
                     })
             else:
                 return jsonify({'type': 'None'})
 
     if agent['type'] == "ENGINEER_BOT":
         x, y = agent['location']
-        if game_DB['round'] in [1, 10, 20]: 
+        if game_DB['round'] in [1, 10, 20]:
             return jsonify({
                 "type": "EXPLORE",
                 "params": {}
                 })
 
-        elif game_DB['round'] // 2 == 0:
+        elif game_DB['round'] % 2 == 0:
             return jsonify({
                 "type": "MOVE",
                 "params": {
-                "d_loc": [random.choice([-2, 2]), random.choice([-2, 2])]
-                }
+                        "d_loc": [random.choice([-2, 2]), random.choice([-2, 2])]
+                        }
                 })
-        
-        elif game_DB['round'] // 2 != 0 and a.check_position(agents, 'WINDMILL'): 
+
+        elif game_DB['round'] % 2 != 0 and a.check_position(agents, 'WINDMILL'):
             return jsonify({
                 "type": "DEPLOY",
                 "params": {
-                    "power_type": "WINDMILL",
-                    "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
-                }
+                        "power_type": "WINDMILL",
+                        "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
+                        }
                 })
-        elif game_DB['round'] // 2 != 0 and a.check_position(agents, "SOLAR_PANELS"): 
+        elif game_DB['round'] % 2 != 0 and a.check_position(agents, "SOLAR_PANELS"):
             if map[x][y] == 'DESERT' or map[x][y] == 'PLAINS':
                 return jsonify({
                     "type": "DEPLOY",
                     "params": {
-                        "power_type": "SOLAR_PANELS",
-                        "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
-                    }
+                            "power_type": "SOLAR_PANELS",
+                            "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
+                            }
                     })
             else:
                 return jsonify({
                     "type": "MOVE",
                     "params": {
-                    "d_loc": [random.choice([-2, 2]), random.choice([-2, 2])]
-                    }
+                            "d_loc": [random.choice([-2, 2]), random.choice([-2, 2])]
+                            }
                     })
-            
-        else:        
+
+        else:
             return jsonify({'type': 'None'})
 
 
 @app.route('/agent/<int:id>', methods=['DELETE'])
-def toDeleteAgent(id: int):
+def toDeleteAgent(id: int) -> Response:
     del agents[id]
     return Response(status=200)
 
 
 @app.route('/agent/<int:id>/view', methods=['POST'])
-def toExplore(id: int):
+def toExplore(id: int) -> Response:
     r = request.get_json()
     for i in r['map']:
         for j in i:

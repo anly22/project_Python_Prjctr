@@ -1,15 +1,15 @@
-def check_balance(database: dict, amount: int):
+def check_balance(database: dict, amount: int) -> bool:
     if database['balance'] >= amount:
         return True
     else:
         return False
 
 
-def check_amount(database: dict):
+def check_amount(database: dict) -> int:
     return len(database)
 
 
-def check_position(database: list[dict], position: str):
+def check_position(database: dict, position: str) -> bool:
     for i in database.keys():
         if database[i]['type'] == "FACTORY":
             if "warehouse" not in database[i].keys():

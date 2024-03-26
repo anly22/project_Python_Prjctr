@@ -1,5 +1,4 @@
 from flask import Flask, Response, jsonify, request
-# import json
 import random
 import action as a
 
@@ -39,7 +38,7 @@ def toInit() -> Response:
 
         return Response(status=200)
     else:
-        return Response(status=404)
+        return Response(status=400)
 
 
 @app.route('/round', methods=['POST'])
@@ -50,7 +49,7 @@ def toRound() -> Response:
         game_DB['round'] = r['round']
         return Response(status=200)
     else:
-        return Response(status=404)
+        return Response(status=400)
 
 
 @app.route('/agent/<int:id>', methods=['POST'])
@@ -58,11 +57,9 @@ def toInitAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
         agents[id] = r
-        x, y = r['location']
-        map[x][y] = {'agent': {'id': agents[id]['id'], 'type': agents[id]['type']}}
         return Response(status=200)
     else:
-        return Response(status=404)
+        return Response(status=400)
 
 
 @app.route('/agent/<int:id>', methods=['PATCH'])
@@ -70,11 +67,9 @@ def toUpdateAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
         agents[id].update(r)
-        x, y = r['location']
-        map[x][y] = {'agent': {'id': agents[id]['id'], 'type': agents[id]['type']}}
         return Response(status=200)
     else:
-        return Response(status=404)
+        return Response(status=400)
 
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
@@ -171,13 +166,16 @@ def toDeleteAgent(id: int) -> Response:
 
 @app.route('/agent/<int:id>/view', methods=['POST'])
 def toExplore(id: int) -> Response:
-    r = request.get_json()
-    view =  r['map']
-    for x in range(game_DB['map_size']):
-        for y in range(game_DB['map_size']):
-                if view[x][y] != None:
-                    map[x][y] = view[x][y] 
-    return Response(status=200)
+    if request.is_json:
+        r = request.get_json()
+        view = r['map']
+        for x in range(game_DB['map_size']):
+            for y in range(game_DB['map_size']):
+                    if view[x][y] is not None:
+                        map[x][y] = view[x][y] 
+        return Response(status=200)
+    else:
+        return Response(status=400)
 
 
 if __name__ == '__main__':

@@ -83,21 +83,7 @@ def toGetAction(id: int):
                         "d_loc": (random.choice([-2, 2]), random.choice([-2, 2]))
                         }
                 }), 200
-        elif 3 <= len(agents) < 6 and a.check_balance(game_DB, 200):
-                return jsonify({
-                    "type": "ASSEMBLE_POWER_PLANT",
-                    "params": {
-                            "power_type": "WINDMILL"
-                            }
-                    }), 200
-        elif 6 <= len(agents) < 7 and a.check_balance(game_DB, 500):
-            return jsonify({
-                "type": "BUILD_BOT",
-                "params": {
-                        "d_loc": (random.choice([-1, 3]), random.choice([-1, 3]))
-                        }
-                }), 200
-        elif 7 <= len(agents) < 10 and a.check_balance(game_DB, 500):
+        elif len(agents) >= 3 and a.check_balance(game_DB, 100):
             return jsonify({
                 "type": "ASSEMBLE_POWER_PLANT",
                 "params": {

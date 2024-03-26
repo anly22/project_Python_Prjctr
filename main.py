@@ -76,11 +76,11 @@ def toUpdateAgent(id: int) -> Response:
 def toGetAction(id: int):
     agent = agents[id]
     if agent['type'] == "FACTORY":
-        if game_DB['round'] == 0:
+        if len(agents) < 2:
             return jsonify({
                 "type": "BUILD_BOT",
                 "params": {
-                        "d_loc": [(random.choice([-2, 2]), random.choice([-2, 2]))]
+                        "d_loc": (random.choice([-2, 2]), random.choice([-2, 2]))
                         }
                 }), 200
         else:

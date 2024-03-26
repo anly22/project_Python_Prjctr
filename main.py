@@ -76,58 +76,42 @@ def toUpdateAgent(id: int) -> Response:
 def toGetAction(id: int):
     agent = agents[id]
     if agent['type'] == "FACTORY":
-        if len(agents) < 2:
+        if len(agents) < 3:
             return jsonify({
                 "type": "BUILD_BOT",
                 "params": {
                         "d_loc": (random.choice([-2, 2]), random.choice([-2, 2]))
                         }
                 }), 200
-        else:
-            if a.check_balance(game_DB, 200) and sum(agent["warehouse"].values()) < 2:
+        elif 3 <= len(agents) < 6 and a.check_balance(game_DB, 200):
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
                             "power_type": "WINDMILL"
                             }
                     }), 200
-            elif a.check_balance(game_DB, 600):
-                return jsonify({
-                    "type": "BUILD_BOT",
-                    "params": {
-                            "d_loc": [(random.choice([-2, 2]), random.choice([-2, 2]))]
-                            }
-                    }), 200
-            elif a.check_balance(game_DB, 600) and sum(agent["warehouse"].values()) < 3:
-                return jsonify({
-                    "type": "ASSEMBLE_POWER_PLANT",
-                    "params": {
-                            "power_type": "SOLAR_PANELS"
-                            }
-                    }), 200
-            else:
-                return jsonify({
-                    "type": "NONE",
-                    "params": {}
-                    }), 200
-
-    if agent['type'] == "ENGINEER_BOT":
-        x, y = agent['location']
-        if game_DB['round'] in [1, 10, 20]:
+        elif 6 <= len(agents) < 7 and a.check_balance(game_DB, 500):
             return jsonify({
-                "type": "EXPLORE",
+                "type": "BUILD_BOT",
+                "params": {
+                        "d_loc": (random.choice([-1, 3]), random.choice([-1, 3]))
+                        }
+                }), 200
+        elif 7 <= len(agents) < 10 and a.check_balance(game_DB, 500):
+            return jsonify({
+                "type": "ASSEMBLE_POWER_PLANT",
+                "params": {
+                        "power_type": "WINDMILL"
+                        }
+                }), 200
+        else:
+            return jsonify({
+                "type": "NONE",
                 "params": {}
                 }), 200
 
-        elif game_DB['round'] % 2 == 0:
-            return jsonify({
-                "type": "MOVE",
-                "params": {
-                        "d_loc": [random.choice([-2, 2]), random.choice([-2, 2])]
-                        }
-                }), 200
-
-        elif game_DB['round'] % 2 != 0 and a.check_position(agents, 'WINDMILL'):
+    if agent['type'] == "ENGINEER_BOT":
+        if a.check_position(agents, 'WINDMILL'):
             return jsonify({
                 "type": "DEPLOY",
                 "params": {
@@ -135,28 +119,14 @@ def toGetAction(id: int):
                         "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
                         }
                 }), 200
-        elif game_DB['round'] % 2 != 0 and a.check_position(agents, "SOLAR_PANELS"):
-            if map[x][y] == 'DESERT' or map[x][y] == 'PLAINS':
-                return jsonify({
-                    "type": "DEPLOY",
-                    "params": {
-                            "power_type": "SOLAR_PANELS",
-                            "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
-                            }
-                    }), 200
-            else:
-                return jsonify({
-                    "type": "MOVE",
-                    "params": {
-                            "d_loc": [random.choice([-1, 1]), random.choice([-1, 1])]
-                            }
-                    }), 200
-
         else:
             return jsonify({
-                "type": "NONE",
-                "params": {}
+                "type": "MOVE",
+                "params": {
+                        "d_loc": (random.choice([-2, 2]), random.choice([-2, 2]))
+                        }
                 }), 200
+
 
 @app.route('/agent/<int:id>', methods=['DELETE'])
 def toDeleteAgent(id: int) -> Response:

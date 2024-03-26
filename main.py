@@ -87,7 +87,7 @@ def toGetAction(id: int):
                 "params": {
                         "d_loc": [(random.choice([-2, 2]), random.choice([-2, 2]))]
                         }
-                })
+                }), 200
         else:
             if a.check_balance(game_DB, 200) and sum(agent["warehouse"].values()) < 2:
                 return jsonify({
@@ -95,23 +95,26 @@ def toGetAction(id: int):
                     "params": {
                             "power_type": "WINDMILL"
                             }
-                    })
+                    }), 200
             elif a.check_balance(game_DB, 600):
                 return jsonify({
                     "type": "BUILD_BOT",
                     "params": {
                             "d_loc": [(random.choice([-2, 2]), random.choice([-2, 2]))]
                             }
-                    })
+                    }), 200
             elif a.check_balance(game_DB, 600) and sum(agent["warehouse"].values()) < 3:
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
                             "power_type": "SOLAR_PANELS"
                             }
-                    })
+                    }), 200
             else:
-                return jsonify({'type': 'None'})
+                return jsonify({
+                    "type": "NONE",
+                    "params": {}
+                    }), 200
 
     if agent['type'] == "ENGINEER_BOT":
         x, y = agent['location']
@@ -119,7 +122,7 @@ def toGetAction(id: int):
             return jsonify({
                 "type": "EXPLORE",
                 "params": {}
-                })
+                }), 200
 
         elif game_DB['round'] % 2 == 0:
             return jsonify({
@@ -127,7 +130,7 @@ def toGetAction(id: int):
                 "params": {
                         "d_loc": [random.choice([-2, 2]), random.choice([-2, 2])]
                         }
-                })
+                }), 200
 
         elif game_DB['round'] % 2 != 0 and a.check_position(agents, 'WINDMILL'):
             return jsonify({
@@ -136,7 +139,7 @@ def toGetAction(id: int):
                         "power_type": "WINDMILL",
                         "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
                         }
-                })
+                }), 200
         elif game_DB['round'] % 2 != 0 and a.check_position(agents, "SOLAR_PANELS"):
             if map[x][y] == 'DESERT' or map[x][y] == 'PLAINS':
                 return jsonify({
@@ -145,18 +148,20 @@ def toGetAction(id: int):
                             "power_type": "SOLAR_PANELS",
                             "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
                             }
-                    })
+                    }), 200
             else:
                 return jsonify({
                     "type": "MOVE",
                     "params": {
-                            "d_loc": [random.choice([-2, 2]), random.choice([-2, 2])]
+                            "d_loc": [random.choice([-1, 1]), random.choice([-1, 1])]
                             }
-                    })
+                    }), 200
 
         else:
-            return jsonify({'type': 'None'})
-
+            return jsonify({
+                "type": "NONE",
+                "params": {}
+                }), 200
 
 @app.route('/agent/<int:id>', methods=['DELETE'])
 def toDeleteAgent(id: int) -> Response:
@@ -167,10 +172,11 @@ def toDeleteAgent(id: int) -> Response:
 @app.route('/agent/<int:id>/view', methods=['POST'])
 def toExplore(id: int) -> Response:
     r = request.get_json()
-    for i in r['map']:
-        for j in i:
-            x, y = j['location']
-            map[x][y] = j
+    view =  r['map']
+    for x in range(game_DB['map_size']):
+        for y in range(game_DB['map_size']):
+                if view[x][y] != None:
+                    map[x][y] = view[x][y] 
     return Response(status=200)
 
 

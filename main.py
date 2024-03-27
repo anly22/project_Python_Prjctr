@@ -98,25 +98,33 @@ def toGetAction(id: int):
                 }), 200
 
     if agent['type'] == "ENGINEER_BOT":
-        if game_DB['round'] in [1, 10, 20]:
+        if game_DB['round'] == 1 #in [1, 10, 20]:
             return jsonify({
                 "type": "EXPLORE",
                 "params": {}
                 }), 200
         else:
-            if a.check_position(agents, 'WINDMILL'):
-                return jsonify({
-                    "type": "DEPLOY",
-                    "params": {
-                            "power_type": "WINDMILL",
-                            "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
-                            }
-                    }), 200
+            if game_DB['round'] % 2 == 0:
+                if a.check_position(agents, 'WINDMILL'):
+                    return jsonify({
+                        "type": "DEPLOY",
+                        "params": {
+                                "power_type": "WINDMILL",
+                                "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
+                                }
+                        }), 200
+                else:
+                    return jsonify({
+                        "type": "MOVE",
+                        "params": {
+                                "d_loc": (random.choice([0, 2]), random.choice([0, 2]))
+                                }
+                        }), 200
             else:
                 return jsonify({
                     "type": "MOVE",
                     "params": {
-                            "d_loc": (random.choice([0, 2]), random.choice([0, 2]))
+                            "d_loc": (random.choice([-2, 0]), random.choice([-2, 0]))
                             }
                     }), 200
 

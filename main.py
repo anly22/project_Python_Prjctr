@@ -98,7 +98,7 @@ def toGetAction(id: int):
                 }), 200
 
     if agent['type'] == "ENGINEER_BOT":
-        if game_DB['round'] == 1 #in [1, 10, 20]:
+        if game_DB['round'] == 1: #in [1, 10, 20]:
             return jsonify({
                 "type": "EXPLORE",
                 "params": {}

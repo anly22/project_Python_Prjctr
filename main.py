@@ -31,7 +31,7 @@ def toInit() -> Response:
         game_DB['team'] = r['team']
         size = r['map_size']
         map = [[None] * size for _ in range(size)]
-        print(map)
+        # print(map)
 
         global agents
         agents = {}
@@ -116,7 +116,7 @@ def toGetAction(id: int):
                 return jsonify({
                     "type": "MOVE",
                     "params": {
-                            "d_loc": (random.choice([-1, 1]), random.choice([-1, 1]))
+                            "d_loc": (random.choice([0, 2]), random.choice([0, 2]))
                             }
                     }), 200
 
@@ -133,10 +133,14 @@ def toExplore(id: int) -> Response:
         r = request.get_json()
         print(r)
         view = r['map']
-        for x in range(game_DB['map_size']):
-            for y in range(game_DB['map_size']):
-                    if view[x][y] is not None:
-                        map[x][y] = view[x][y] 
+        # for x in range(game_DB['map_size']):
+        #     for y in range(game_DB['map_size']):
+        #             if view[x][y] is not None:
+        #                 map[x][y] = view[x][y] 
+        for i in view:
+            for j in i:
+                x, y = j['location']
+                map[x][y] = j
         return Response(status=200)
     else:
         return Response(status=400)

@@ -109,7 +109,7 @@ def toGetAction(id: int):
             return jsonify({
                 "type": "MOVE",
                 "params": {
-                        "d_loc": (random.choice([-2, 2]), random.choice([-2, 2]))
+                        "d_loc": (random.choice([-1, 1]), random.choice([-1, 1]))
                         }
                 }), 200
 

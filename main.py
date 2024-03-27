@@ -67,6 +67,7 @@ def toUpdateAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
         agents[id].update(r)
+        print(r)
         return Response(status=200)
     else:
         return Response(status=400)
@@ -97,21 +98,27 @@ def toGetAction(id: int):
                 }), 200
 
     if agent['type'] == "ENGINEER_BOT":
-        if a.check_position(agents, 'WINDMILL'):
+        if game_DB['round'] in [1, 10, 20]:
             return jsonify({
-                "type": "DEPLOY",
-                "params": {
-                        "power_type": "WINDMILL",
-                        "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
-                        }
+                "type": "EXPLORE",
+                "params": {}
                 }), 200
         else:
-            return jsonify({
-                "type": "MOVE",
-                "params": {
-                        "d_loc": (random.choice([-1, 1]), random.choice([-1, 1]))
-                        }
-                }), 200
+            if a.check_position(agents, 'WINDMILL'):
+                return jsonify({
+                    "type": "DEPLOY",
+                    "params": {
+                            "power_type": "WINDMILL",
+                            "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
+                            }
+                    }), 200
+            else:
+                return jsonify({
+                    "type": "MOVE",
+                    "params": {
+                            "d_loc": (random.choice([-1, 1]), random.choice([-1, 1]))
+                            }
+                    }), 200
 
 
 @app.route('/agent/<int:id>', methods=['DELETE'])
@@ -124,6 +131,7 @@ def toDeleteAgent(id: int) -> Response:
 def toExplore(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
+        print(r)
         view = r['map']
         for x in range(game_DB['map_size']):
             for y in range(game_DB['map_size']):

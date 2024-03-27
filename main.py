@@ -137,10 +137,10 @@ def toExplore(id: int) -> Response:
         #     for y in range(game_DB['map_size']):
         #             if view[x][y] is not None:
         #                 map[x][y] = view[x][y] 
-        for i in view:
-            for j in i:
-                x, y = j['location']
-                map[x][y] = j
+        # for i in view:
+        #     for j in i:
+        #         x, y = j['location']
+        #         map[x][y] = j
         return Response(status=200)
     else:
         return Response(status=400)

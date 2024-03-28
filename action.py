@@ -15,7 +15,7 @@ def check_position(database: dict, position: str) -> bool:
             if "warehouse" not in database[i].keys():
                 return False
             else:
-                if position in database[i]["warehouse"].keys():
+                if position in database[i]["warehouse"].keys() and database[i]["warehouse"][position] != 0:
                     return True
                 else:
                     return False

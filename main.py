@@ -61,12 +61,12 @@ def toInitAgent(id: int) -> Response:
         x, y = r['location']
         if r['type'] == 'FACTORY': 
             agents[id] = r
-            game_DB['map'][x][y] = {'type': None,'agent': {agents[id]}}
+            game_DB['map'][x][y] = {'type': None,'agent': agents[id]}
         elif r['type'] == 'ENGINEER_BOT':
             agents[id] = r
         elif r['type'] == "POWER_PLANT":
             plants[id] = r
-            game_DB['map'][x][y]  =  {'type': None,'agent': {plants[id]}}
+            game_DB['map'][x][y] = {'type': None,'agent': plants[id]}
         return Response(status=200)
     else:
         return Response(status=400)

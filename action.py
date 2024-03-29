@@ -54,3 +54,61 @@ def get_d_loc(aim: str) -> list:
     elif aim == 'deploy':
         d_loc = random.choice([[0, 1], [0, -1], [1, 0], [-1, 0]])
         return d_loc
+
+
+def check_not_full_n(database: dict[int: dict], num1: int) -> bool:
+    for i in database.keys():
+        if database[i]['type'] == "FACTORY":
+            if "warehouse" not in database[i].keys():
+                return True
+            else:
+                if sum(database[i]["warehouse"].values()) < num:
+                    return True
+                else:
+                    return False
+
+
+def check_map_near_loc(maparrey: list[list], location: list[int], aim: str) -> list[int, int]:
+    x, y = location
+    if maparrey[x-1][y] is not None:
+        if maparrey[x-1][y]['type'] == aim and maparrey[x-1][y]['agent'] is None:
+            return [-1, 0]
+        else:
+            return get_d_loc('deploy') 
+    elif maparrey[x][y-1] is not None:
+        if maparrey[x][y-1]['type'] == aim and maparrey[x][y-1]['agent'] is None:
+            return [0, -1]
+        else:
+            return get_d_loc('deploy') 
+    elif maparrey[x+1][y] is not None:
+        if maparrey[x+1][y]['type'] == aim and maparrey[x+1][y]['agent'] is None:
+            return [1, 0]
+        else:
+            return get_d_loc('deploy') 
+    elif maparrey[x][y+1] is not None:
+        if maparrey[x][y+1]['type'] == aim and maparrey[x][y+1]['agent'] is None:
+            return [0, 1]
+        else:
+            return get_d_loc('deploy') 
+    else:
+        return get_d_loc('deploy') 
+
+
+def get_loc(database: dict, name: str) -> list[int, int]:
+    for i in database.keys():
+        if database[i]['type'] == name:
+            return database[i]['location']
+
+
+def check_map_near_bool(maparrey: list[list], location: list[int], aim: str) -> bool:
+    x, y = location
+    if maparrey[x-1][y] is not None and maparrey[x-1][y]['type'] == aim:
+        return True
+    elif maparrey[x][y-1] is not None and maparrey[x][y-1]['type'] == aim:
+        return True
+    elif maparrey[x+1][y] is not None and maparrey[x+1][y]['type'] == aim:
+        return True
+    elif maparrey[x][y+1] is not None and maparrey[x][y+1]['type'] == aim:
+        return True
+    else:
+        return False

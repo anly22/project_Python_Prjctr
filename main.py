@@ -8,14 +8,13 @@ app = Flask(__name__)
 game_DB = {
     'balance': None,
     'map_size': None,
+    'map': None,
     'team': None,
     'round': 0
     }
 
 agents = {}
 plants = {}
-
-map = []
 
 
 @app.route('/health')
@@ -31,8 +30,8 @@ def toInit() -> Response:
         game_DB['balance'] = r['init_balance']
         game_DB['team'] = r['team']
         size = r['map_size']
-        map = [[None] * size for _ in range(size)]
-        # print(map)
+        game_DB['map'] = [[None] * size for _ in range(size)]
+        print(map)
 
         global agents, plants
         agents = {}
@@ -49,7 +48,7 @@ def toRound() -> Response:
         r = request.get_json()
         game_DB['balance'] = r['balance']
         game_DB['round'] = r['round']
-        print(game_DB, agents, plants)
+        print(game_DB['round'], agents, plants)
         return Response(status=200)
     else:
         return Response(status=400)
@@ -177,12 +176,12 @@ def toDeleteAgent(id: int) -> Response:
 def toExplore(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
-        # print(r)
+        print(r)
         view = r['map']
         for x in range(game_DB['map_size']):
             for y in range(game_DB['map_size']):
                 if view[x][y] is not None:
-                    map[x][y] = view[x][y]
+                    game_DB['map'][x][y] = view[x][y]
         print(map)
         return Response(status=200)
     else:

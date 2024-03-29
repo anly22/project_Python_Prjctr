@@ -13,6 +13,7 @@ game_DB = {
     }
 
 agents = {}
+plants = {}
 
 map = None
 
@@ -33,8 +34,9 @@ def toInit() -> Response:
         map = [[None] * size for _ in range(size)]
         # print(map)
 
-        global agents
+        global agents, plants
         agents = {}
+        plants = {}
 
         return Response(status=200)
     else:
@@ -47,6 +49,7 @@ def toRound() -> Response:
         r = request.get_json()
         game_DB['balance'] = r['balance']
         game_DB['round'] = r['round']
+        print(game_DB, agents, plants)
         return Response(status=200)
     else:
         return Response(status=400)
@@ -56,7 +59,11 @@ def toRound() -> Response:
 def toInitAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
-        agents[id] = r
+        # TODO save location to map
+        if r['type'] == 'FACTORY' or r['type'] == 'ENGINEER_BOT':
+            agents[id] = r
+        elif r['type'] == "POWER_PLANT":
+            plants[id] = r
         return Response(status=200)
     else:
         return Response(status=400)
@@ -77,20 +84,40 @@ def toUpdateAgent(id: int) -> Response:
 def toGetAction(id: int):
     agent = agents[id]
     if agent['type'] == "FACTORY":
-        if len(agents) < 3:
+        if len(agents) < 2:
             return jsonify({
                 "type": "BUILD_BOT",
                 "params": {
-                        "d_loc": (random.choice([-2, 2]), random.choice([-2, 2]))
+                        "d_loc": (a.get_d_loc('build'))
                         }
                 }), 200
-        elif len(agents) >= 3 and a.check_balance(game_DB, 100):
+        elif len(agents) == 2 and a.check_balance(game_DB, 250):
             return jsonify({
-                "type": "ASSEMBLE_POWER_PLANT",
+                "type": "BUILD_BOT",
                 "params": {
-                        "power_type": "WINDMILL"
+                        "d_loc": (a.get_d_loc('build'))
                         }
                 }), 200
+        elif len(agents) >= 2:
+            if len(plants) < 10 and a.check_balance(game_DB, 100) and a.check_not_full(agents):
+                return jsonify({
+                    "type": "ASSEMBLE_POWER_PLANT",
+                    "params": {
+                            "power_type": "WINDMILL"
+                            }
+                    }), 200
+            elif 10 <= len(plants) <= 15 and a.check_balance(game_DB, 1000) and a.check_not_full(agents):
+                return jsonify({
+                    "type": "ASSEMBLE_POWER_PLANT",
+                    "params": {
+                            "power_type": "SOLAR_PANELS"
+                            }
+                    }), 200
+            else:
+                return jsonify({
+                    "type": "NONE",
+                    "params": {}
+                    }), 200
         else:
             return jsonify({
                 "type": "NONE",
@@ -98,7 +125,7 @@ def toGetAction(id: int):
                 }), 200
 
     if agent['type'] == "ENGINEER_BOT":
-        if game_DB['round'] == 1: #in [1, 10, 20]:
+        if game_DB['round'] == 2:
             return jsonify({
                 "type": "EXPLORE",
                 "params": {}
@@ -110,21 +137,29 @@ def toGetAction(id: int):
                         "type": "DEPLOY",
                         "params": {
                                 "power_type": "WINDMILL",
-                                "d_loc": random.choice([[-1, 0], [0, -1], [1, 0], [0, 1]])
+                                "d_loc": (a.get_d_loc('deploy'))
+                                }
+                        }), 200
+                elif a.check_position(agents, 'SOLAR_PANELS'):
+                    return jsonify({
+                        "type": "DEPLOY",
+                        "params": {
+                                "power_type": "SOLAR_PANELS",
+                                "d_loc": (a.get_d_loc('deploy'))
                                 }
                         }), 200
                 else:
                     return jsonify({
                         "type": "MOVE",
                         "params": {
-                                "d_loc": (random.choice([0, 2]), random.choice([0, 2]))
+                                "d_loc": (a.get_d_loc('move'))
                                 }
                         }), 200
             else:
                 return jsonify({
                     "type": "MOVE",
                     "params": {
-                            "d_loc": (random.choice([-2, 0]), random.choice([-2, 0]))
+                            "d_loc": (a.get_d_loc('move'))
                             }
                     }), 200
 

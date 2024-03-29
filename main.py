@@ -60,10 +60,13 @@ def toInitAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
         # TODO save location to map
+        # x, y = r['location']
         if r['type'] == 'FACTORY' or r['type'] == 'ENGINEER_BOT':
             agents[id] = r
+            # map[x][y] = {'agent': {agents[id]}}
         elif r['type'] == "POWER_PLANT":
             plants[id] = r
+            # map[x][y] = {'agent': {plants[id]}}
         return Response(status=200)
     else:
         return Response(status=400)
@@ -174,16 +177,13 @@ def toDeleteAgent(id: int) -> Response:
 def toExplore(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
-        print(r)
+        # print(r)
         view = r['map']
-        # for x in range(game_DB['map_size']):
-        #     for y in range(game_DB['map_size']):
-        #             if view[x][y] is not None:
-        #                 map[x][y] = view[x][y] 
-        # for i in view:
-        #     for j in i:
-        #         x, y = j['location']
-        #         map[x][y] = j
+        for x in range(game_DB['map_size']):
+            for y in range(game_DB['map_size']):
+                if view[x][y] is not None:
+                    map[x][y] = view[x][y]
+        print(map)
         return Response(status=200)
     else:
         return Response(status=400)

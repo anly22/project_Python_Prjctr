@@ -56,7 +56,7 @@ def get_d_loc(aim: str) -> list:
         return d_loc
 
 
-def check_not_full_n(database: dict[int: dict], num1: int) -> bool:
+def check_not_full_n(database: dict[int: dict], num: int) -> bool:
     for i in database.keys():
         if database[i]['type'] == "FACTORY":
             if "warehouse" not in database[i].keys():

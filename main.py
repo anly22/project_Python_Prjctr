@@ -15,7 +15,7 @@ game_DB = {
 agents = {}
 plants = {}
 
-map = None
+map = []
 
 
 @app.route('/health')

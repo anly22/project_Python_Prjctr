@@ -84,7 +84,6 @@ def toUpdateAgent(id: int) -> Response:
 
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
-@app.route('/agent/<int:id>/action', methods=['GET'])
 def toGetAction(id: int):
     agent = agents[id]
     if agent['type'] == "FACTORY":
@@ -137,12 +136,18 @@ def toGetAction(id: int):
                             "params": {}
                             }), 200
                 else:
-                    return jsonify({
-                            "type": "ASSEMBLE_POWER_PLANT",
-                            "params": {
-                                    "power_type": "WINDMILL"
-                                    }
-                            }), 200
+                    if len(plants) < 15:
+                        return jsonify({
+                                "type": "ASSEMBLE_POWER_PLANT",
+                                "params": {
+                                        "power_type": "WINDMILL"
+                                        }
+                                }), 200
+                    else:
+                        return jsonify({
+                        "type": "NONE",
+                        "params": {}
+                        }), 200
             else:
                 return jsonify({
                         "type": "NONE",

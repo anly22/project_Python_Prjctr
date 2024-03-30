@@ -84,6 +84,7 @@ def toUpdateAgent(id: int) -> Response:
 
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
+@app.route('/agent/<int:id>/action', methods=['GET'])
 def toGetAction(id: int):
     agent = agents[id]
     if agent['type'] == "FACTORY":
@@ -94,41 +95,60 @@ def toGetAction(id: int):
                         "d_loc": (a.get_d_loc('build'))
                         }
                 }), 200
-        else: 
-            if a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'OCEAN') or a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'PLAINS'):
-                if a.check_balance(game_DB, 100) and a.check_not_full_n(agents, 3):
+        else:
+            if a.check_not_full(agents):
+                if a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'):
+                    if a.check_balance(game_DB, 1000):
+                        return jsonify({
+                            "type": "ASSEMBLE_POWER_PLANT",
+                            "params": {
+                                    "power_type": "SOLAR_PANELS"
+                                    }
+                            }), 200
+                    else:
+                        return jsonify({
+                            "type": "NONE",
+                            "params": {}
+                            }), 200
+                elif a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'MOUNTAIN'):
+                    if a.check_balance(game_DB, 1000):
+                        return jsonify({
+                            "type": "ASSEMBLE_POWER_PLANT",
+                            "params": {
+                                    "power_type": "GEOTHERMAL"
+                                    }
+                            }), 200
+                    else:
+                        return jsonify({
+                            "type": "NONE",
+                            "params": {}
+                            }), 200   
+                elif a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'RIVER'):
+                    if a.check_balance(game_DB, 1500): #check if it is not in plants
+                        return jsonify({
+                            "type": "ASSEMBLE_POWER_PLANT",
+                            "params": {
+                                    "power_type": "DAM"
+                                    }
+                            }), 200
+                    else:
+                        return jsonify({
+                            "type": "NONE",
+                            "params": {}
+                            }), 200
+                else:
                     return jsonify({
                             "type": "ASSEMBLE_POWER_PLANT",
                             "params": {
                                     "power_type": "WINDMILL"
                                     }
                             }), 200
-                else:
-                    return jsonify({
-                            "type": "NONE",
-                            "params": {}
-                            }), 200
-            elif a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'):
-                if a.check_balance(game_DB, 1000) and a.check_not_full_n(agents, 4):
-                    return jsonify({
-                            "type": "ASSEMBLE_POWER_PLANT",
-                            "params": {
-                                    "power_type": "SOLAR_PANELS"
-                                    }
-                            }), 200
-                else:
-                     return jsonify({
-                            "type": "NONE",
-                            "params": {}
-                            }), 200
             else:
                 return jsonify({
-                        "type": "ASSEMBLE_POWER_PLANT",
-                        "params": {
-                                "power_type": "WINDMILL"
-                                }
+                        "type": "NONE",
+                        "params": {}
                         }), 200
-                    
+
     if agent['type'] == "ENGINEER_BOT":
         # x, y = agent['location']
         if game_DB['round'] in [2, 10, 20]:
@@ -137,8 +157,7 @@ def toGetAction(id: int):
                 "params": {}
                 }), 200
         else:
-            if a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'OCEAN'):
-                if a.check_position(agents, 'WINDMILL'):
+            if a.check_position(agents, 'WINDMILL') and a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'OCEAN'):
                     return jsonify({
                         "type": "DEPLOY",
                         "params": {
@@ -146,15 +165,7 @@ def toGetAction(id: int):
                                 "d_loc": (a.check_map_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'OCEAN'))
                                 }
                         }), 200
-                else:
-                    return jsonify({
-                        "type": "MOVE",
-                        "params": {
-                                "d_loc": (a.get_d_loc('move'))
-                                }
-                        }), 200
-            elif a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'):    
-                if a.check_position(agents, 'SOLAR_PANELS'):
+            elif a.check_position(agents, 'SOLAR_PANELS') and a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'):    
                     return jsonify({
                         "type": "DEPLOY",
                         "params": {
@@ -162,15 +173,24 @@ def toGetAction(id: int):
                                 "d_loc": (a.check_map_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'))
                                 }
                         }), 200
-                else:
+            elif a.check_position(agents, 'GEOTHERMAL') and a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'MOUNTAIN'):    
                     return jsonify({
-                        "type": "MOVE",
+                        "type": "DEPLOY",
                         "params": {
-                                "d_loc": (a.get_d_loc('move'))
+                                "power_type": "GEOTHERMAL",
+                                "d_loc": (a.check_map_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'MOUNTAIN'))
+                                }
+                        }), 200
+            elif a.check_position(agents, 'DAM') and a.check_map_near_bool(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'RIVER'):    
+                    return jsonify({
+                        "type": "DEPLOY",
+                        "params": {
+                                "power_type": "DAM",
+                                "d_loc": (a.check_map_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'RIVER'))
                                 }
                         }), 200
             else:
-                if a.check_position(agents, 'WINDMILL'):
+                if game_DB['round'] % 2 == 0 and a.check_position(agents, 'WINDMILL'):
                     return jsonify({
                         "type": "DEPLOY",
                         "params": {

@@ -23,7 +23,7 @@ def check_position(database: dict, position: str) -> bool:
                     return False
 
 
-def check_not_full(database: dict[int: dict]):
+def check_not_full(database: dict[int: dict]) -> bool:
     for i in database.keys():
         if database[i]['type'] == "FACTORY":
             if "warehouse" not in database[i].keys():
@@ -35,7 +35,7 @@ def check_not_full(database: dict[int: dict]):
                     return False
 
 
-def get_d_loc(aim: str) -> list:
+def get_d_loc(aim: str) -> list[int, int]:
     d_loc = []
     if aim == 'move':
         while True:

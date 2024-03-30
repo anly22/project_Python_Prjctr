@@ -70,7 +70,7 @@ def check_not_full_n(database: dict[int: dict], num: int) -> bool:
 
 def check_map_near_loc(maparrey: list[list], location: list[int], aim: str) -> list[int, int]:
     x, y = location
-    if all(num in range(len(maparrey)+1) for num in ((x-1), (x+1), (y-1), (y+1))):
+    if all(num in range(len(maparrey)) for num in ((x-1), (x+1), (y-1), (y+1))):
         if maparrey[x-1][y] is not None:
             if maparrey[x-1][y]['type'] == aim and maparrey[x-1][y]['agent'] is None:
                 return [-1, 0]
@@ -105,7 +105,7 @@ def get_loc(database: dict, name: str) -> list[int, int]:
 
 def check_map_near_bool(maparrey: list[list], location: list[int], aim: str) -> bool:
     x, y = location
-    if all(num in range(len(maparrey)+1) for num in ((x-1), (x+1), (y-1), (y+1))):
+    if all(num in range(len(maparrey)) for num in ((x-1), (x+1), (y-1), (y+1))):
         if maparrey[x-1][y] is not None and maparrey[x-1][y]['type'] == aim:
             return True
         elif maparrey[x][y-1] is not None and maparrey[x][y-1]['type'] == aim:

@@ -1,5 +1,4 @@
 from flask import Flask, Response, jsonify, request
-import random
 import action as a
 
 
@@ -13,8 +12,8 @@ game_DB = {
     'round': 0
     }
 
-agents = {}
-plants = {}
+agents: dict = {}
+plants: dict = {}
 
 
 @app.route('/health')
@@ -59,14 +58,14 @@ def toInitAgent(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
         x, y = r['location']
-        if r['type'] == 'FACTORY': 
+        if r['type'] == 'FACTORY':
             agents[id] = r
-            game_DB['map'][x][y] = {'type': None,'agent': agents[id]}
+            game_DB['map'][x][y] = {'type': None, 'agent': agents[id]}
         elif r['type'] == 'ENGINEER_BOT':
             agents[id] = r
         elif r['type'] == "POWER_PLANT":
             plants[id] = r
-            game_DB['map'][x][y] = {'type': None,'agent': plants[id]}
+            game_DB['map'][x][y] = {'type': None, 'agent': plants[id]}
         return Response(status=200)
     else:
         return Response(status=400)
@@ -84,7 +83,7 @@ def toUpdateAgent(id: int) -> Response:
 
 
 @app.route('/agent/<int:id>/action', methods=['GET'])
-def toGetAction(id: int):
+def toGetAction(id: int) -> tuple[Response, int]:
     agent = agents[id]
     if agent['type'] == "FACTORY":
         if len(agents) < 2:
@@ -102,18 +101,25 @@ def toGetAction(id: int):
                         }
                 }), 200
         elif len(agents) >= 2:
-            if len(plants) < 10 and a.check_balance(game_DB, 100) and a.check_not_full(agents):
+            if len(plants) <= 10 and a.check_balance(game_DB, 100) and a.check_not_full(agents):
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
                             "power_type": "WINDMILL"
                             }
                     }), 200
-            elif 10 <= len(plants) <= 15 and a.check_balance(game_DB, 1000) and a.check_not_full(agents):
+            elif 10 < len(plants) <= 15 and a.check_balance(game_DB, 1000) and a.check_not_full(agents):  #noqa
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
                             "power_type": "SOLAR_PANELS"
+                            }
+                    }), 200
+            elif 16 <= len(plants) and a.check_balance(game_DB, 1000) and a.check_not_full(agents):
+                return jsonify({
+                    "type": "ASSEMBLE_POWER_PLANT",
+                    "params": {
+                            "power_type": "WINDMILL"
                             }
                     }), 200
             else:

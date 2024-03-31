@@ -1,35 +1,32 @@
 import random
 
-def check_balance(database: dict, amount: int) -> bool:
-    if database['balance'] >= amount:
+
+def check_balance(db: dict, amount: int) -> bool:
+    if db['balance'] >= amount:
         return True
     else:
         return False
 
 
-def check_amount(database: dict) -> int:
-    return len(database)
-
-
-def check_position(database: dict, position: str) -> bool:
-    for i in database.keys():
-        if database[i]['type'] == "FACTORY":
-            if "warehouse" not in database[i].keys():
+def check_position(db: dict, position: str) -> bool:
+    for i in db.keys():
+        if db[i]['type'] == "FACTORY":
+            if "warehouse" not in db[i].keys():
                 return False
             else:
-                if position in database[i]["warehouse"].keys() and database[i]["warehouse"][position] != 0:
+                if position in db[i]["warehouse"].keys() and db[i]["warehouse"][position] != 0:
                     return True
                 else:
                     return False
 
 
-def check_not_full(database: dict[int: dict]):
-    for i in database.keys():
-        if database[i]['type'] == "FACTORY":
-            if "warehouse" not in database[i].keys():
+def check_not_full(db: dict) -> bool:
+    for i in db.keys():
+        if db[i]['type'] == "FACTORY":
+            if "warehouse" not in db[i].keys():
                 return True
             else:
-                if sum(database[i]["warehouse"].values()) < 3:
+                if sum(db[i]["warehouse"].values()) < 3:
                     return True
                 else:
                     return False

@@ -108,7 +108,7 @@ def toGetAction(id: int) -> tuple[Response, int]:
                             "power_type": "WINDMILL"
                             }
                     }), 200
-            elif 10 < len(plants) <= 15 and a.check_balance(game_DB, 1000) and a.check_not_full(agents):  #noqa
+            elif 10 < len(plants) <= 15 and a.check_balance(game_DB, 1000) and a.check_not_full(agents):  # noqa
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {

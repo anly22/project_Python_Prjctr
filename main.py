@@ -81,7 +81,6 @@ def toUpdateAgent(id: int) -> Response:
         return Response(status=400)
 
 
-@app.route('/agent/<int:id>/action', methods=['GET'])
 def toGetActionFactory(id: int) -> tuple[Response, int]:
     agent = agents[id]
     if agent['type'] == "FACTORY":
@@ -153,7 +152,6 @@ def toGetActionFactory(id: int) -> tuple[Response, int]:
                             }), 200
 
 
-@app.route('/agent/<int:id>/action', methods=['GET'])
 def toGetActionEngineer(id: int) -> tuple[Response, int]:
     agent = agents[id]
     if agent['type'] == "ENGINEER_BOT":
@@ -211,6 +209,17 @@ def toGetActionEngineer(id: int) -> tuple[Response, int]:
                                     "d_loc": (a.get_d_loc('move'))
                                     }
                             }), 200
+
+
+@app.route('/agent/<int:id>/action', methods=['GET'])
+def toGetAction(id: int) -> tuple[Response, int] | Response:
+    agent = agents[id]
+    if agent['type'] == "FACTORY":
+        return toGetActionFactory(id)
+    elif agent['type'] == "ENGINEER_BOT":
+        return toGetActionEngineer(id)
+    else:
+        return Response(status=400)
 
 
 @app.route('/agent/<int:id>', methods=['DELETE'])

@@ -57,16 +57,16 @@ def get_d_loc(aim: str) -> list[int]:
         return d_loc
 
 
-def check_not_full_n(db: dict, num: int) -> bool:
-    for i in db.keys():
-        if db[i]['type'] == "FACTORY":
-            if "warehouse" not in db[i].keys():
-                return True
-            else:
-                if sum(db[i]["warehouse"].values()) < num:
-                    return True
-                else:
-                    return False
+# def check_not_full_n(db: dict, num: int) -> bool:
+#     for i in db.keys():
+#         if db[i]['type'] == "FACTORY":
+#             if "warehouse" not in db[i].keys():
+#                 return True
+#             else:
+#                 if sum(db[i]["warehouse"].values()) < num:
+#                     return True
+#                 else:
+#                     return False
 
 
 def check_near_loc(maparrey: list[list], location: list[int], aim: str) -> list[int]:

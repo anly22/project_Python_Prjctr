@@ -119,3 +119,13 @@ def check_near(maparrey: list[list], location: list[int], aim: str) -> bool:
             return False
     else:
         return False
+
+
+def check_power_type(db: dict, plant: str) -> int:
+    count = 0
+    for i in db:
+        if db[i]['power_type'] == plant:
+            count += 1
+        else:
+            pass
+    return count

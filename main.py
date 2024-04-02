@@ -120,7 +120,7 @@ def toGetActionFactory(id: int) -> tuple[Response, int]:
                             "params": {}
                             }), 200
                 elif a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'RIVER'):
-                    if a.check_balance(game_DB, 1500) and not a.check_plant(agents, 'DAM'):
+                    if a.check_balance(game_DB, 1500) and a.check_power_type(plants, 'DAM') < 1:
                         return jsonify({
                             "type": "ASSEMBLE_POWER_PLANT",
                             "params": {

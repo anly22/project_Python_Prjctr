@@ -29,7 +29,7 @@ def toInit() -> Response:
         game_DB['balance'] = r['init_balance']
         game_DB['team'] = r['team']
         size = r['map_size']
-        game_DB['map'] = [[None] * size for _ in range(size)]
+        game_DB['map'] = [[None] * size for _ in range(size)]  # type: ignore
 
         global agents, plants
         agents = {}
@@ -59,12 +59,14 @@ def toInitAgent(id: int) -> Response:
         x, y = r['location']
         if r['type'] == 'FACTORY':
             agents[id] = r
-            game_DB['map'][x][y] = {'type': None, 'agent': agents[id]}
+            game_DB['map'][x][y] = {'type': None,  # type: ignore
+                                    'agent': agents[id]}
         elif r['type'] == 'ENGINEER_BOT':
             agents[id] = r
         elif r['type'] == "POWER_PLANT":
             plants[id] = r
-            game_DB['map'][x][y] = {'type': None, 'agent': plants[id]}
+            game_DB['map'][x][y] = {'type': None,  # type: ignore
+                                    'agent': plants[id]}
         return Response(status=200)
     else:
         return Response(status=400)
@@ -82,8 +84,6 @@ def toUpdateAgent(id: int) -> Response:
 
 
 def toGetActionFactory() -> tuple[Response, int]:
-    # agent = agents[id]
-    # if agent['type'] == "FACTORY":
     if len(agents) < 2:
         return jsonify({
             "type": "BUILD_BOT",
@@ -93,7 +93,9 @@ def toGetActionFactory() -> tuple[Response, int]:
             }), 200
     else:
         if a.check_not_full(agents):
-            if a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'):
+            if a.check_near(game_DB['map'],  # type: ignore
+                            a.get_loc(agents, 'ENGINEER_BOT'),
+                            'DESERT'):
                 if a.check_balance(game_DB, 1000):
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
@@ -106,7 +108,9 @@ def toGetActionFactory() -> tuple[Response, int]:
                         "type": "NONE",
                         "params": {}
                         }), 200
-            elif a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'MOUNTAIN'):
+            elif a.check_near(game_DB['map'],  # type: ignore
+                              a.get_loc(agents, 'ENGINEER_BOT'),
+                              'MOUNTAIN'):
                 if a.check_balance(game_DB, 1000):
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
@@ -119,8 +123,11 @@ def toGetActionFactory() -> tuple[Response, int]:
                         "type": "NONE",
                         "params": {}
                         }), 200
-            elif a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'RIVER'):
-                if a.check_balance(game_DB, 1500) and a.check_power_type(plants, 'DAM') < 1:
+            elif a.check_near(game_DB['map'],  # type: ignore
+                              a.get_loc(agents, 'ENGINEER_BOT'),
+                              'RIVER'):
+                if a.check_balance(game_DB, 1500) and \
+                        a.check_power_type(plants, 'DAM') < 1:
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
                         "params": {
@@ -147,48 +154,67 @@ def toGetActionFactory() -> tuple[Response, int]:
 
 
 def toGetActionEngineer() -> tuple[Response, int]:
-    # agent = agents[id]
-    # if agent['type'] == "ENGINEER_BOT":
     if game_DB['round'] in [2, 20, 50, 90, 120, 180]:
         return jsonify({
             "type": "EXPLORE",
             "params": {}
             }), 200
     else:
-        if a.check_plant(agents, 'WINDMILL') and a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'OCEAN'):  # noqa
+        if a.check_plant(agents, 'WINDMILL') and \
+            a.check_near(game_DB['map'],  # type: ignore
+                         a.get_loc(agents, 'ENGINEER_BOT'),
+                         'OCEAN'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "WINDMILL",
-                            "d_loc": (a.check_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'OCEAN'))  # noqa
+                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
+                                                       a.get_loc(agents, 'ENGINEER_BOT'),
+                                                       'OCEAN'))
                             }
                     }), 200
-        elif a.check_plant(agents, 'SOLAR_PANELS') and a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'):  # noqa
+        elif a.check_plant(agents, 'SOLAR_PANELS') and \
+            a.check_near(game_DB['map'],  # type: ignore
+                         a.get_loc(agents, 'ENGINEER_BOT'),
+                         'DESERT'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "SOLAR_PANELS",
-                            "d_loc": (a.check_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'DESERT'))  # noqa
+                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
+                                                       a.get_loc(agents, 'ENGINEER_BOT'),
+                                                       'DESERT'))
                             }
                     }), 200
-        elif a.check_plant(agents, 'GEOTHERMAL') and a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'MOUNTAIN'):  # noqa
+        elif a.check_plant(agents, 'GEOTHERMAL') and \
+            a.check_near(game_DB['map'],  # type: ignore
+                         a.get_loc(agents, 'ENGINEER_BOT'),
+                         'MOUNTAIN'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "GEOTHERMAL",
-                            "d_loc": (a.check_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'MOUNTAIN'))  # noqa
+                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
+                                                       a.get_loc(agents, 'ENGINEER_BOT'),
+                                                       'MOUNTAIN'))
                             }
                     }), 200
-        elif a.check_plant(agents, 'DAM') and a.check_near(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'RIVER'):  # noqa
+        elif a.check_plant(agents, 'DAM') and \
+            a.check_near(game_DB['map'],  # type: ignore
+                         a.get_loc(agents, 'ENGINEER_BOT'),
+                         'RIVER'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "DAM",
-                            "d_loc": (a.check_near_loc(game_DB['map'], a.get_loc(agents, 'ENGINEER_BOT'), 'RIVER'))  # noqa
+                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
+                                                       a.get_loc(agents, 'ENGINEER_BOT'),
+                                                       'RIVER'))
                             }
                     }), 200
         else:
-            if game_DB['round'] % 2 == 0 and a.check_plant(agents, 'WINDMILL'):
+            if game_DB['round'] % 2 == 0 and a.check_plant(agents,  # type: ignore
+                                                           'WINDMILL'):
                 return jsonify({
                         "type": "DEPLOY",
                         "params": {
@@ -226,12 +252,11 @@ def toDeleteAgent(id: int) -> Response:
 def toExplore(id: int) -> Response:
     if request.is_json:
         r = request.get_json()
-        # print(r)
         view = r['map']
-        for x in range(game_DB['map_size']):
-            for y in range(game_DB['map_size']):
+        for x in range(game_DB['map_size']):  # type: ignore
+            for y in range(game_DB['map_size']):  # type: ignore
                 if view[x][y] is not None:
-                    game_DB['map'][x][y] = view[x][y]
+                    game_DB['map'][x][y] = view[x][y]  # type: ignore
         print(game_DB['map'])
         return Response(status=200)
     else:

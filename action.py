@@ -8,7 +8,6 @@ def check_balance(db: dict, amount: int) -> bool:
         return False
 
 
-# !!! Change with raise
 def check_plant(db: dict, plant: str) -> bool:
     for i in db.keys():
         if db[i]['type'] == "FACTORY":
@@ -25,7 +24,6 @@ def check_plant(db: dict, plant: str) -> bool:
         raise ValueError
 
 
-# !!! Change with raise
 def check_not_full(db: dict) -> bool:
     for i in db.keys():
         if db[i]['type'] == "FACTORY":
@@ -42,7 +40,6 @@ def check_not_full(db: dict) -> bool:
         raise ValueError
 
 
-# Change with raise
 def get_d_loc(aim: str) -> list[int]:
     d_loc = [0, 0]
     if aim == 'move':
@@ -66,31 +63,26 @@ def get_d_loc(aim: str) -> list[int]:
         return d_loc
 
 
-# Change with raise because get_loc is changed
 def check_near_loc(maparrey: list[list], location: None | list[int], aim: str) -> list[int]:
     if location is not None:
         x, y = location
         if all(num in range(len(maparrey)) for num in ((x-1), (x+1), (y-1), (y+1))):
-            if maparrey[x-1][y] is not None:
-                if maparrey[x-1][y]['type'] == aim and maparrey[x-1][y]['agent'] is None:
-                    return [-1, 0]
-                else:
-                    return get_d_loc('deploy')
-            elif maparrey[x][y-1] is not None:
-                if maparrey[x][y-1]['type'] == aim and maparrey[x][y-1]['agent'] is None:
-                    return [0, -1]
-                else:
-                    return get_d_loc('deploy')
-            elif maparrey[x+1][y] is not None:
-                if maparrey[x+1][y]['type'] == aim and maparrey[x+1][y]['agent'] is None:
-                    return [1, 0]
-                else:
-                    return get_d_loc('deploy')
-            elif maparrey[x][y+1] is not None:
-                if maparrey[x][y+1]['type'] == aim and maparrey[x][y+1]['agent'] is None:
-                    return [0, 1]
-                else:
-                    return get_d_loc('deploy')
+            if maparrey[x-1][y] is not None and \
+                    maparrey[x-1][y]['type'] == aim and \
+                    maparrey[x-1][y]['agent'] is None:
+                return [-1, 0]
+            elif maparrey[x][y-1] is not None and \
+                    maparrey[x][y-1]['type'] == aim and \
+                    maparrey[x][y-1]['agent'] is None:
+                return [0, -1]
+            elif maparrey[x+1][y] is not None and \
+                    maparrey[x+1][y]['type'] == aim and \
+                    maparrey[x+1][y]['agent'] is None:
+                return [1, 0]
+            elif maparrey[x][y+1] is not None and \
+                    maparrey[x][y+1]['type'] == aim and \
+                    maparrey[x][y+1]['agent'] is None:
+                return [0, 1]
             else:
                 return get_d_loc('deploy')
         else:
@@ -99,7 +91,6 @@ def check_near_loc(maparrey: list[list], location: None | list[int], aim: str) -
         raise ValueError
 
 
-# !!! Change with raise
 def get_loc(db: dict, name: str) -> None | list[int]:
     for i in db.keys():
         if db[i]['type'] == name:
@@ -109,7 +100,6 @@ def get_loc(db: dict, name: str) -> None | list[int]:
     return None
 
 
-# Change with raise because get_loc is changed
 def check_near(maparrey: list[list], location: None | list[int], aim: str) -> bool:
     if location is not None:
         x, y = location

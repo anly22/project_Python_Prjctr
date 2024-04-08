@@ -92,7 +92,7 @@ def toGetActionFactory() -> tuple[Response, int]:
                     }
             }), 200
     else:
-        if u.get_not_full(agents):
+        if u.get_warehouse_not_full(agents):
             if u.get_near(game_DB['map'],  # type: ignore
                           u.get_loc(agents, 'ENGINEER_BOT'),
                           'DESERT'):

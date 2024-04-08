@@ -96,7 +96,7 @@ def toGetActionFactory() -> tuple[Response, int]:
             if u.get_near(game_DB['map'],  # type: ignore
                           u.get_loc(agents, 'ENGINEER_BOT'),
                           'DESERT'):
-                if u.get_balance(game_DB, 1000):
+                if u.get_balance(game_DB, 800):
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
                         "params": {
@@ -111,7 +111,7 @@ def toGetActionFactory() -> tuple[Response, int]:
             elif u.get_near(game_DB['map'],  # type: ignore
                             u.get_loc(agents, 'ENGINEER_BOT'),
                             'MOUNTAIN'):
-                if u.get_balance(game_DB, 1000):
+                if u.get_balance(game_DB, 800):
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
                         "params": {
@@ -126,7 +126,7 @@ def toGetActionFactory() -> tuple[Response, int]:
             elif u.get_near(game_DB['map'],  # type: ignore
                             u.get_loc(agents, 'ENGINEER_BOT'),
                             'RIVER'):
-                if u.get_balance(game_DB, 1500) and \
+                if u.get_balance(game_DB, 1200) and \
                         u.get_power_type(plants, 'DAM') < 1:
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
@@ -159,7 +159,7 @@ def toGetActionEngineer() -> tuple[Response, int]:
             "type": "EXPLORE",
             "params": {}
             }), 200
-    elif game_DB['round'] % 2 != 0:  #type: ignore
+    elif game_DB['round'] % 2 != 0:  # type: ignore
         return jsonify({
                         "type": "MOVE",
                         "params": {

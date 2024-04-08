@@ -84,7 +84,7 @@ def toUpdateAgent(id: int) -> Response:
 
 
 def toGetActionFactory() -> tuple[Response, int]:
-    if len(agents) < 2:
+    if len(agents) < 3 and u.get_balance(game_DB, 250):
         return jsonify({
             "type": "BUILD_BOT",
             "params": {
@@ -92,7 +92,7 @@ def toGetActionFactory() -> tuple[Response, int]:
                     }
             }), 200
     else:
-        if u.get_not_full(agents):
+        if u.get_warehouse_not_full(agents):
             if u.get_near(game_DB['map'],  # type: ignore
                           u.get_loc(agents, 'ENGINEER_BOT'),
                           'DESERT'):

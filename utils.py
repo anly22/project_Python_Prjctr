@@ -24,7 +24,7 @@ def get_plant(db: dict, plant: str) -> bool:
         raise ValueError
 
 
-def get_not_full(db: dict) -> bool:
+def get_warehouse_not_full(db: dict) -> bool:
     for i in db.keys():
         if db[i]['type'] == "FACTORY":
             if "warehouse" not in db[i].keys():

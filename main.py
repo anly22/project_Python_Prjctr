@@ -84,7 +84,7 @@ def toUpdateAgent(id: int) -> Response:
 
 
 def toGetActionFactory() -> tuple[Response, int]:
-    if len(agents) < 3 and u.get_balance(game_DB, 250):
+    if len(agents) < 3 and u.get_balance(game_DB, 350):
         return jsonify({
             "type": "BUILD_BOT",
             "params": {

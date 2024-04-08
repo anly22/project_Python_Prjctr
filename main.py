@@ -91,42 +91,37 @@ def toGetActionFactory() -> tuple[Response, int]:
                     "d_loc": (u.get_d_loc('build'))
                     }
             }), 200
+    elif 2 <= len(agents) < 3 and u.get_balance(game_DB, 400):
+        return jsonify({
+            "type": "BUILD_BOT",
+            "params": {
+                    "d_loc": (u.get_d_loc('build'))
+                    }
+            }), 200
     else:
         if u.get_warehouse_not_full(agents):
             if u.get_near(game_DB['map'],  # type: ignore
                           u.get_loc(agents, 'ENGINEER_BOT'),
-                          'DESERT'):
-                if u.get_balance(game_DB, 1000):
-                    return jsonify({
-                        "type": "ASSEMBLE_POWER_PLANT",
-                        "params": {
-                                "power_type": "SOLAR_PANELS"
-                                }
-                        }), 200
-                else:
-                    return jsonify({
-                        "type": "NONE",
-                        "params": {}
-                        }), 200
+                          'DESERT') and u.get_balance(game_DB, 800):
+                return jsonify({
+                    "type": "ASSEMBLE_POWER_PLANT",
+                    "params": {
+                            "power_type": "SOLAR_PANELS"
+                            }
+                    }), 200
             elif u.get_near(game_DB['map'],  # type: ignore
                             u.get_loc(agents, 'ENGINEER_BOT'),
-                            'MOUNTAIN'):
-                if u.get_balance(game_DB, 1000):
-                    return jsonify({
-                        "type": "ASSEMBLE_POWER_PLANT",
-                        "params": {
-                                "power_type": "GEOTHERMAL"
-                                }
-                        }), 200
-                else:
-                    return jsonify({
-                        "type": "NONE",
-                        "params": {}
-                        }), 200
+                            'MOUNTAIN') and u.get_balance(game_DB, 800):
+                return jsonify({
+                    "type": "ASSEMBLE_POWER_PLANT",
+                    "params": {
+                            "power_type": "GEOTHERMAL"
+                            }
+                    }), 200
             elif u.get_near(game_DB['map'],  # type: ignore
                             u.get_loc(agents, 'ENGINEER_BOT'),
                             'RIVER'):
-                if u.get_balance(game_DB, 1500) and \
+                if u.get_balance(game_DB, 1200) and \
                         u.get_power_type(plants, 'DAM') < 1:
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
@@ -139,13 +134,18 @@ def toGetActionFactory() -> tuple[Response, int]:
                         "type": "NONE",
                         "params": {}
                         }), 200
-            else:
+            elif u.get_balance(game_DB, 120):
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
                             "power_type": "WINDMILL"
                             }
                     }), 200
+            else:
+                return jsonify({
+                            "type": "NONE",
+                            "params": {}
+                            }), 200
         else:
             return jsonify({
                         "type": "NONE",
@@ -154,13 +154,20 @@ def toGetActionFactory() -> tuple[Response, int]:
 
 
 def toGetActionEngineer() -> tuple[Response, int]:
-    if game_DB['round'] in [2, 20, 50, 90, 120, 180]:
+    if game_DB['round'] in [3, 19, 49, 89, 119, 149, 179, 299, 399]:
         return jsonify({
             "type": "EXPLORE",
             "params": {}
             }), 200
+    elif game_DB['round'] % 2 != 0:  # type: ignore
+        return jsonify({
+                        "type": "MOVE",
+                        "params": {
+                                "d_loc": (u.get_d_loc('move'))
+                                }
+                        }), 200
     else:
-        if u.get_plant(agents, 'WINDMILL') and \
+        if u.get_plant_in_warehouse(agents, 'WINDMILL') and \
             u.get_near(game_DB['map'],  # type: ignore
                        u.get_loc(agents, 'ENGINEER_BOT'),
                        'OCEAN'):
@@ -173,7 +180,7 @@ def toGetActionEngineer() -> tuple[Response, int]:
                                                      'OCEAN'))
                             }
                     }), 200
-        elif u.get_plant(agents, 'SOLAR_PANELS') and \
+        elif u.get_plant_in_warehouse(agents, 'SOLAR_PANELS') and \
             u.get_near(game_DB['map'],  # type: ignore
                        u.get_loc(agents, 'ENGINEER_BOT'),
                        'DESERT'):
@@ -186,7 +193,7 @@ def toGetActionEngineer() -> tuple[Response, int]:
                                                      'DESERT'))
                             }
                     }), 200
-        elif u.get_plant(agents, 'GEOTHERMAL') and \
+        elif u.get_plant_in_warehouse(agents, 'GEOTHERMAL') and \
             u.get_near(game_DB['map'],  # type: ignore
                        u.get_loc(agents, 'ENGINEER_BOT'),
                        'MOUNTAIN'):
@@ -199,7 +206,7 @@ def toGetActionEngineer() -> tuple[Response, int]:
                                                      'MOUNTAIN'))
                             }
                     }), 200
-        elif u.get_plant(agents, 'DAM') and \
+        elif u.get_plant_in_warehouse(agents, 'DAM') and \
             u.get_near(game_DB['map'],  # type: ignore
                        u.get_loc(agents, 'ENGINEER_BOT'),
                        'RIVER'):
@@ -213,8 +220,7 @@ def toGetActionEngineer() -> tuple[Response, int]:
                             }
                     }), 200
         else:
-            if game_DB['round'] % 2 == 0 and u.get_plant(agents,  # type: ignore
-                                                         'WINDMILL'):
+            if u.get_plant_in_warehouse(agents, 'WINDMILL'):  # type: ignore
                 return jsonify({
                         "type": "DEPLOY",
                         "params": {

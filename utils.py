@@ -8,7 +8,7 @@ def get_balance(db: dict, amount: int) -> bool:
         return False
 
 
-def get_plant(db: dict, plant: str) -> bool:
+def get_plant_in_warehouse(db: dict, plant: str) -> bool:
     for i in db.keys():
         if db[i]['type'] == "FACTORY":
             if "warehouse" not in db[i].keys():

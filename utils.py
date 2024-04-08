@@ -1,14 +1,14 @@
 import random
 
 
-def check_balance(db: dict, amount: int) -> bool:
+def get_balance(db: dict, amount: int) -> bool:
     if db['balance'] >= amount:
         return True
     else:
         return False
 
 
-def check_plant(db: dict, plant: str) -> bool:
+def get_plant(db: dict, plant: str) -> bool:
     for i in db.keys():
         if db[i]['type'] == "FACTORY":
             if "warehouse" not in db[i].keys():
@@ -24,7 +24,7 @@ def check_plant(db: dict, plant: str) -> bool:
         raise ValueError
 
 
-def check_not_full(db: dict) -> bool:
+def get_not_full(db: dict) -> bool:
     for i in db.keys():
         if db[i]['type'] == "FACTORY":
             if "warehouse" not in db[i].keys():
@@ -63,7 +63,7 @@ def get_d_loc(aim: str) -> list[int]:
         return d_loc
 
 
-def check_near_loc(maparrey: list[list], location: None | list[int], aim: str) -> list[int]:
+def get_near_loc(maparrey: list[list], location: None | list[int], aim: str) -> list[int]:
     if location is not None:
         x, y = location
         if all(num in range(len(maparrey)) for num in ((x-1), (x+1), (y-1), (y+1))):
@@ -100,7 +100,7 @@ def get_loc(db: dict, name: str) -> None | list[int]:
     return None
 
 
-def check_near(maparrey: list[list], location: None | list[int], aim: str) -> bool:
+def get_near(maparrey: list[list], location: None | list[int], aim: str) -> bool:
     if location is not None:
         x, y = location
         if all(num in range(len(maparrey)) for num in ((x-1), (x+1), (y-1), (y+1))):
@@ -120,7 +120,7 @@ def check_near(maparrey: list[list], location: None | list[int], aim: str) -> bo
         raise ValueError
 
 
-def check_power_type(db: dict, plant: str) -> int:
+def get_power_type(db: dict, plant: str) -> int:
     count = 0
     for i in db:
         if db[i]['power_type'] == plant:

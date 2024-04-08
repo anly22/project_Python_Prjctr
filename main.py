@@ -1,5 +1,5 @@
 from flask import Flask, Response, jsonify, request
-import action as a
+import utils as u
 
 
 app = Flask(__name__)
@@ -88,15 +88,15 @@ def toGetActionFactory() -> tuple[Response, int]:
         return jsonify({
             "type": "BUILD_BOT",
             "params": {
-                    "d_loc": (a.get_d_loc('build'))
+                    "d_loc": (u.get_d_loc('build'))
                     }
             }), 200
     else:
-        if a.check_not_full(agents):
-            if a.check_near(game_DB['map'],  # type: ignore
-                            a.get_loc(agents, 'ENGINEER_BOT'),
-                            'DESERT'):
-                if a.check_balance(game_DB, 1000):
+        if u.get_not_full(agents):
+            if u.get_near(game_DB['map'],  # type: ignore
+                          u.get_loc(agents, 'ENGINEER_BOT'),
+                          'DESERT'):
+                if u.get_balance(game_DB, 1000):
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
                         "params": {
@@ -108,10 +108,10 @@ def toGetActionFactory() -> tuple[Response, int]:
                         "type": "NONE",
                         "params": {}
                         }), 200
-            elif a.check_near(game_DB['map'],  # type: ignore
-                              a.get_loc(agents, 'ENGINEER_BOT'),
-                              'MOUNTAIN'):
-                if a.check_balance(game_DB, 1000):
+            elif u.get_near(game_DB['map'],  # type: ignore
+                            u.get_loc(agents, 'ENGINEER_BOT'),
+                            'MOUNTAIN'):
+                if u.get_balance(game_DB, 1000):
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
                         "params": {
@@ -123,11 +123,11 @@ def toGetActionFactory() -> tuple[Response, int]:
                         "type": "NONE",
                         "params": {}
                         }), 200
-            elif a.check_near(game_DB['map'],  # type: ignore
-                              a.get_loc(agents, 'ENGINEER_BOT'),
-                              'RIVER'):
-                if a.check_balance(game_DB, 1500) and \
-                        a.check_power_type(plants, 'DAM') < 1:
+            elif u.get_near(game_DB['map'],  # type: ignore
+                            u.get_loc(agents, 'ENGINEER_BOT'),
+                            'RIVER'):
+                if u.get_balance(game_DB, 1500) and \
+                        u.get_power_type(plants, 'DAM') < 1:
                     return jsonify({
                         "type": "ASSEMBLE_POWER_PLANT",
                         "params": {
@@ -160,73 +160,73 @@ def toGetActionEngineer() -> tuple[Response, int]:
             "params": {}
             }), 200
     else:
-        if a.check_plant(agents, 'WINDMILL') and \
-            a.check_near(game_DB['map'],  # type: ignore
-                         a.get_loc(agents, 'ENGINEER_BOT'),
-                         'OCEAN'):
+        if u.get_plant(agents, 'WINDMILL') and \
+            u.get_near(game_DB['map'],  # type: ignore
+                       u.get_loc(agents, 'ENGINEER_BOT'),
+                       'OCEAN'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "WINDMILL",
-                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
-                                                       a.get_loc(agents, 'ENGINEER_BOT'),
-                                                       'OCEAN'))
+                            "d_loc": (u.get_near_loc(game_DB['map'],  # type: ignore
+                                                     u.get_loc(agents, 'ENGINEER_BOT'),
+                                                     'OCEAN'))
                             }
                     }), 200
-        elif a.check_plant(agents, 'SOLAR_PANELS') and \
-            a.check_near(game_DB['map'],  # type: ignore
-                         a.get_loc(agents, 'ENGINEER_BOT'),
-                         'DESERT'):
+        elif u.get_plant(agents, 'SOLAR_PANELS') and \
+            u.get_near(game_DB['map'],  # type: ignore
+                       u.get_loc(agents, 'ENGINEER_BOT'),
+                       'DESERT'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "SOLAR_PANELS",
-                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
-                                                       a.get_loc(agents, 'ENGINEER_BOT'),
-                                                       'DESERT'))
+                            "d_loc": (u.get_near_loc(game_DB['map'],  # type: ignore
+                                                     u.get_loc(agents, 'ENGINEER_BOT'),
+                                                     'DESERT'))
                             }
                     }), 200
-        elif a.check_plant(agents, 'GEOTHERMAL') and \
-            a.check_near(game_DB['map'],  # type: ignore
-                         a.get_loc(agents, 'ENGINEER_BOT'),
-                         'MOUNTAIN'):
+        elif u.get_plant(agents, 'GEOTHERMAL') and \
+            u.get_near(game_DB['map'],  # type: ignore
+                       u.get_loc(agents, 'ENGINEER_BOT'),
+                       'MOUNTAIN'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "GEOTHERMAL",
-                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
-                                                       a.get_loc(agents, 'ENGINEER_BOT'),
-                                                       'MOUNTAIN'))
+                            "d_loc": (u.get_near_loc(game_DB['map'],  # type: ignore
+                                                     u.get_loc(agents, 'ENGINEER_BOT'),
+                                                     'MOUNTAIN'))
                             }
                     }), 200
-        elif a.check_plant(agents, 'DAM') and \
-            a.check_near(game_DB['map'],  # type: ignore
-                         a.get_loc(agents, 'ENGINEER_BOT'),
-                         'RIVER'):
+        elif u.get_plant(agents, 'DAM') and \
+            u.get_near(game_DB['map'],  # type: ignore
+                       u.get_loc(agents, 'ENGINEER_BOT'),
+                       'RIVER'):
             return jsonify({
                     "type": "DEPLOY",
                     "params": {
                             "power_type": "DAM",
-                            "d_loc": (a.check_near_loc(game_DB['map'],  # type: ignore
-                                                       a.get_loc(agents, 'ENGINEER_BOT'),
-                                                       'RIVER'))
+                            "d_loc": (u.get_near_loc(game_DB['map'],  # type: ignore
+                                                     u.get_loc(agents, 'ENGINEER_BOT'),
+                                                     'RIVER'))
                             }
                     }), 200
         else:
-            if game_DB['round'] % 2 == 0 and a.check_plant(agents,  # type: ignore
-                                                           'WINDMILL'):
+            if game_DB['round'] % 2 == 0 and u.get_plant(agents,  # type: ignore
+                                                         'WINDMILL'):
                 return jsonify({
                         "type": "DEPLOY",
                         "params": {
                                 "power_type": "WINDMILL",
-                                "d_loc": (a.get_d_loc('deploy'))
+                                "d_loc": (u.get_d_loc('deploy'))
                                 }
                         }), 200
             else:
                 return jsonify({
                         "type": "MOVE",
                         "params": {
-                                "d_loc": (a.get_d_loc('move'))
+                                "d_loc": (u.get_d_loc('move'))
                                 }
                         }), 200
 

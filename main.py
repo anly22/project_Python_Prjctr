@@ -154,12 +154,12 @@ def toGetActionFactory() -> tuple[Response, int]:
 
 
 def toGetActionEngineer() -> tuple[Response, int]:
-    if game_DB['round'] in [2, 19, 49, 89, 119, 179, 299, 399]:
+    if game_DB['round'] in [3, 19, 49, 89, 119, 179, 299, 399]:
         return jsonify({
             "type": "EXPLORE",
             "params": {}
             }), 200
-    elif game_DB['round'] % 2 == 0:  # type: ignore
+    elif game_DB['round'] % 2 != 0:  # type: ignore
         return jsonify({
                         "type": "MOVE",
                         "params": {

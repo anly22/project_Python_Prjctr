@@ -102,34 +102,22 @@ def toGetActionFactory() -> tuple[Response, int]:
         if u.get_warehouse_not_full(agents):
             if u.get_near(game_DB['map'],  # type: ignore
                           u.get_loc(agents, 'ENGINEER_BOT'),
-                          'DESERT'):
-                if u.get_balance(game_DB, 800):
-                    return jsonify({
-                        "type": "ASSEMBLE_POWER_PLANT",
-                        "params": {
-                                "power_type": "SOLAR_PANELS"
-                                }
-                        }), 200
-                else:
-                    return jsonify({
-                        "type": "NONE",
-                        "params": {}
-                        }), 200
+                          'DESERT') and u.get_balance(game_DB, 800):
+                return jsonify({
+                    "type": "ASSEMBLE_POWER_PLANT",
+                    "params": {
+                            "power_type": "SOLAR_PANELS"
+                            }
+                    }), 200
             elif u.get_near(game_DB['map'],  # type: ignore
                             u.get_loc(agents, 'ENGINEER_BOT'),
-                            'MOUNTAIN'):
-                if u.get_balance(game_DB, 800):
-                    return jsonify({
-                        "type": "ASSEMBLE_POWER_PLANT",
-                        "params": {
-                                "power_type": "GEOTHERMAL"
-                                }
-                        }), 200
-                else:
-                    return jsonify({
-                        "type": "NONE",
-                        "params": {}
-                        }), 200
+                            'MOUNTAIN') and u.get_balance(game_DB, 800):
+                return jsonify({
+                    "type": "ASSEMBLE_POWER_PLANT",
+                    "params": {
+                            "power_type": "GEOTHERMAL"
+                            }
+                    }), 200
             elif u.get_near(game_DB['map'],  # type: ignore
                             u.get_loc(agents, 'ENGINEER_BOT'),
                             'RIVER'):
@@ -146,13 +134,18 @@ def toGetActionFactory() -> tuple[Response, int]:
                         "type": "NONE",
                         "params": {}
                         }), 200
-            else:
+            elif u.get_balance(game_DB, 120):
                 return jsonify({
                     "type": "ASSEMBLE_POWER_PLANT",
                     "params": {
                             "power_type": "WINDMILL"
                             }
                     }), 200
+            else:
+                return jsonify({
+                            "type": "NONE",
+                            "params": {}
+                            }), 200
         else:
             return jsonify({
                         "type": "NONE",
@@ -161,7 +154,7 @@ def toGetActionFactory() -> tuple[Response, int]:
 
 
 def toGetActionEngineer() -> tuple[Response, int]:
-    if game_DB['round'] in [3, 19, 49, 89, 119, 179, 299, 399]:
+    if game_DB['round'] in [3, 19, 49, 89, 119, 149, 179, 299, 399]:
         return jsonify({
             "type": "EXPLORE",
             "params": {}
